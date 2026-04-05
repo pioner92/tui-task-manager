@@ -1,0 +1,9 @@
+mockups
+cmake-build-debug
+cmake-build-release
+.zed
+.codelite
+.cache
+Debug
+.idea
+build
