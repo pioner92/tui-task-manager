@@ -33,6 +33,8 @@ inline Component TaskInfoBlock(const AppState& app_state, const ModalsController
     const auto& items = app_state.timesheet.get_items();
     static ScrollState scroll_state;
 
+    static EffectState effect_state;
+
     auto copy_title_btn =
         Button(
             "Copy",
@@ -76,7 +78,8 @@ inline Component TaskInfoBlock(const AppState& app_state, const ModalsController
             const auto& task = timesheet_item.task_entity->task;
 
             // Reset offset on task change
-            useEffect(
+            use_effect(
+                effect_state,
                 [] {
                     scroll_state.reset_offset();
                 },

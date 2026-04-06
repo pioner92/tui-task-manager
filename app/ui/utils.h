@@ -6,11 +6,17 @@
 #include <ftxui/dom/elements.hpp>
 #include <functional>
 
-template <typename T> void useEffect(std::function<void()>&& cb, T arg) {
-    static T perv_value;
-    if (perv_value != arg) {
+
+template <typename T = int64_t> struct EffectState {
+    T prev_value{};
+    bool initialized = false;
+};
+
+template <typename T> void use_effect(EffectState<T>& state, std::function<void()>&& cb, const T& arg) {
+    if (!state.initialized || state.prev_value != arg) {
+        state.initialized = true;
+        state.prev_value = arg;
         cb();
-        perv_value = arg;
     }
 }
 
@@ -22,7 +28,7 @@ inline bool is_mouse_inside_box(const Mouse& mouse, const Box& box) {
 }
 
 struct ScrollState {
-    ftxui::Box scroll_box;
+    Box scroll_box;
     float offset_y = 0.0f;
 
     bool handle_mouse(const Mouse& mouse) {

@@ -43,7 +43,7 @@ BinPackParameters: false
 Cpp11BracedListStyle: true
 
 SortIncludes: true
-IncludeIsMainRegex: '([-_](test|unittest))?$'
+IncludeIsMainRegex: "([-_](test|unittest))?$"
 
 SpaceBeforeParens: ControlStatements
 SpaceAfterCStyleCast: true

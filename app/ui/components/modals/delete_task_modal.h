@@ -16,6 +16,8 @@ inline Component DeleteTaskModal(const ModalsController& modals_controller,
     const auto cancel_btn = Button("Cancel", on_cancel, ButtonOption::Ascii());
     const auto delete_btn = Button("Delete", on_confirm, ButtonOption::Ascii()) | color(theme::red);
 
+    static EffectState effect_state;
+
     const auto container = Container::Horizontal({
         cancel_btn,
         delete_btn,
@@ -23,7 +25,8 @@ inline Component DeleteTaskModal(const ModalsController& modals_controller,
 
     return Renderer(container, [container, delete_btn, cancel_btn, &modals_controller] {
         // Focus on cancel button
-        useEffect(
+        use_effect(
+            effect_state,
             [container, cancel_btn] {
                 container->SetActiveChild(cancel_btn);
             },

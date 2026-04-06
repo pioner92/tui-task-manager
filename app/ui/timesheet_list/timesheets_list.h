@@ -1,5 +1,6 @@
 //
-// Created by Oleksandr Shumihin on 25/3/26.
+// Created by Oleksandr Shumihin on
+// 25/3/26.
 //
 
 #pragma once
@@ -37,15 +38,9 @@ inline Component TimesheetList(const Timesheet& timesheet, AppState& app_state) 
                               Text(format_sec_to_hhmm(timesheet.get_day_duration(item.day_ts)), theme::purple) | bold,
                               PaddingH(),
                           }),
-                          hbox({vbox({
-                                    Separator(theme::border),
-                                }) |
-                                flex})
-
-                    }));
+                          hbox({vbox({Separator(theme::border)}) | flex})}));
                 last_day_ts = item.day_ts;
             }
-
 
             const bool is_selected = index == app_state.ui.selected_task_index;
 
@@ -58,17 +53,17 @@ inline Component TimesheetList(const Timesheet& timesheet, AppState& app_state) 
             int64_t duration_sec = item.duration_total_sec;
 
             if (is_active) {
-                duration_sec += (get_now() - app_state.active_session.value().started_at) / 1000;
+                duration_sec += app_state.active_session->duration_sec;
             }
 
             rows.emplace_back(ListItem(
                 {item.task_entity->task.title, duration_sec, item.task_entity->task.status, is_selected, is_active}));
+
             ++index;
         }
 
         return vbox(std::move(rows)) | size(WIDTH, EQUAL, 50) | yframe | vscroll_indicator | reflect(scroll_box) | flex;
     });
-    ;
 
     component |= CatchEvent([&](Event event) {
         if (app_state.ui.show_modal) {

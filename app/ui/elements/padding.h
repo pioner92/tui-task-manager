@@ -11,8 +11,7 @@ enum class PaddingDirection {
     VERTICAL,
 };
 
-template<PaddingDirection d>
-inline Element Padding(const int value = 1) {
+template <PaddingDirection d> inline Element Padding(const int value = 1) {
     return hbox() | size(d == PaddingDirection::HORIZONTAL ? WIDTH : HEIGHT, EQUAL, value);
 }
 

@@ -30,4 +30,11 @@ const auto purple = ftxui::Color::RGB(180, 140, 255);
 // selection
 const auto selection = ftxui::Color::RGB(65, 80, 110);
 const auto focus = ftxui::Color::RGB(80, 100, 140);
+
+
+namespace status {
+    const auto todo = red;
+    const auto in_progress = yellow;
+    const auto done = green;
+} // namespace status
 } // namespace theme

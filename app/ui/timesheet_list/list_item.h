@@ -31,10 +31,10 @@ inline Element ListItem(ListItemProps&& props) {
                       text(""),
                       hbox({TaskStatusBadgeSmall(props.status),
                             filler(),
-                            hbox({props.is_active && props.duration_sec % 2 == 0 ? text("◉ ") | color(theme::red)
+                            hbox({props.is_active && props.duration_sec % 2 == 0 ? text("● ") | color(theme::red) | bold
                                                                                  : emptyElement(),
                                   text(format_sec_to_hhmmss(props.duration_sec)) |
-                                      color(props.is_active ? theme::red : theme::muted)})}),
+                                      (props.is_active ? color(theme::cyan) | bold : color(theme::muted))})}),
                   }) | borderStyled(ROUNDED, props.is_selected ? theme::blue : theme::border),
               }) | flex});
 

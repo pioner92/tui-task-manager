@@ -13,19 +13,20 @@ using namespace ftxui;
 
 
 inline Element TaskStatusBadge(const TaskStatus status) {
-    static Color table[3] = {theme::yellow, theme::cyan, theme::green};
+    static Color table[3] = {theme::status::todo, theme::status::in_progress, theme::status::done};
 
     return hbox({
                filler(),
                text(STATUS_TEXT_TABLE[std::to_underlying(status)]),
                filler(),
-           }) | border | color(table[std::to_underlying(status)]) | size(WIDTH, EQUAL, 15);
+           }) |
+        border | color(table[std::to_underlying(status)]) | size(WIDTH, EQUAL, 15);
 }
 
 
 inline Element TaskStatusBadgeSmall(const TaskStatus status) {
-    static Color table[] = {theme::yellow, theme::cyan, theme::green};
+    static Color table[3] = {theme::status::todo, theme::status::in_progress, theme::status::done};
 
     return text(STATUS_TEXT_SHORT_TABLE[std::to_underlying(status)]) | italic |
-           color(table[std::to_underlying(status)]);
+        color(table[std::to_underlying(status)]);
 }

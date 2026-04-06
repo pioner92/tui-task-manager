@@ -108,6 +108,79 @@ inline std::string format_sec_to_hhmmss(const long long seconds) {
     return "0s";
 }
 
+
+inline void format_sec_to_hhmmss(const long long seconds, char* buf, const size_t buf_size) {
+    if (buf == nullptr || buf_size == 0) {
+        return;
+    }
+
+    const long long hours = seconds / 3600;
+    const long long minutes = (seconds % 3600) / 60;
+    const long long remainder = seconds % 60;
+
+    char* ptr = buf;
+    char* end = buf + buf_size - 1; // reserve for /0;
+
+    const auto finish = [&]() {
+        *ptr = '\0';
+    };
+
+    if (hours > 0) {
+        auto [p1, ec] = std::to_chars(ptr, end, hours);
+        ptr = p1;
+        *ptr++ = 'h';
+        *ptr++ = ' ';
+
+        if (minutes < 10) {
+            *ptr++ = '0';
+        }
+
+        auto [p2, ec2] = std::to_chars(ptr, end, minutes);
+        ptr = p2;
+        *ptr++ = 'm';
+        *ptr++ = ' ';
+
+        if (remainder < 10) {
+            *ptr++ = '0';
+        }
+
+        auto [p3, ec3] = std::to_chars(ptr, end, remainder);
+        ptr = p3;
+        *ptr++ = 's';
+        finish();
+        return;
+    }
+
+    if (minutes > 0) {
+        auto [p1, ec] = std::to_chars(ptr, end, minutes);
+        ptr = p1;
+        *ptr++ = 'm';
+        *ptr++ = ' ';
+
+        if (remainder < 10) {
+            *ptr++ = '0';
+        }
+
+        auto [p2, ec2] = std::to_chars(ptr, end, remainder);
+        ptr = p2;
+        *ptr++ = 's';
+        finish();
+        return;
+    }
+
+    if (remainder > 0) {
+        auto [p1, ec] = std::to_chars(ptr, end, remainder);
+        ptr = p1;
+        *ptr++ = 's';
+        finish();
+        return;
+    }
+
+    *ptr++ = '0';
+    *ptr++ = 's';
+    finish();
+}
+
 inline long long get_now() {
     using namespace std::chrono;
     return duration_cast<milliseconds>(WallClock::now().time_since_epoch()).count();

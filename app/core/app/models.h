@@ -12,9 +12,10 @@
 #include <vector>
 
 #include "../storage/models.h"
+#include "../utils/time_format.h"
 
 namespace db {
-    int finalize_session(sqlite3 *db, int64_t id, int64_t end_at);
+int finalize_session(sqlite3* db, int64_t id, int64_t end_at);
 }
 
 struct TaskEntity {
@@ -30,7 +31,7 @@ struct CreateTaskInfo {
 struct TimesheetItem {
     int64_t day_ts;
     int64_t duration_total_sec;
-    const TaskEntity *task_entity;
+    const TaskEntity* task_entity;
 };
 
 struct Timesheet {
@@ -45,12 +46,12 @@ struct Timesheet {
         return 0;
     };
 
-    [[nodiscard]] const std::vector<TimesheetItem> &get_items() const {
+    [[nodiscard]] const std::vector<TimesheetItem>& get_items() const {
         return items_;
     };
 
 private:
-    friend Timesheet to_timesheet(const std::deque<TaskEntity> &task_entities);
+    friend Timesheet to_timesheet(const std::deque<TaskEntity>& task_entities);
 
     DaysDurations days_duration_;
     std::vector<TimesheetItem> items_;
@@ -60,21 +61,23 @@ private:
 struct AppState;
 
 struct ActiveSessionState {
-    ActiveSessionState(const int64_t task_id, const int64_t session_id, const int64_t started_at,
-                       AppState *app_state) : task_id(task_id),
-                                              session_id(session_id),
-                                              started_at(started_at),
-                                              app_state(app_state) {
-    }
+    ActiveSessionState(const int64_t task_id, const int64_t session_id, const int64_t started_at, AppState* app_state) :
+        task_id(task_id), session_id(session_id), started_at(started_at), app_state(app_state) {}
 
     int64_t task_id = 0;
     int64_t session_id = 0;
     int64_t started_at = 0;
 
+    int64_t duration_sec = 0;
+
     ~ActiveSessionState();
 
+    void refresh_duration() {
+        duration_sec = (get_now() - started_at) / 1000;
+    }
+
 private:
-    AppState *app_state = nullptr;
+    AppState* app_state = nullptr;
 };
 
 enum class ModalType {
@@ -96,7 +99,7 @@ struct AppState {
     Timesheet timesheet;
     std::optional<ActiveSessionState> active_session;
     UIState ui;
-    sqlite3 *db;
+    sqlite3* db;
 };
 
 inline ActiveSessionState::~ActiveSessionState() {
@@ -105,13 +108,13 @@ inline ActiveSessionState::~ActiveSessionState() {
     }
 
     const int64_t end_at =
-            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
             .count();
 
 
-    for (auto &t_e: app_state->tasks) {
+    for (auto& t_e: app_state->tasks) {
         if (t_e.task.id == task_id) {
-            for (auto &s: t_e.sessions) {
+            for (auto& s: t_e.sessions) {
                 if (s.id == session_id) {
                     s.end_at = end_at;
                 }

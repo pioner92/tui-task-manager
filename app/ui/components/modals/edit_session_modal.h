@@ -17,6 +17,7 @@ inline Component EditSessionsModal(const ModalsController& modals_controller,
     Components session_checkboxes;
 
     auto sessions_container = Container::Vertical({});
+    static EffectState effect_state;
 
     auto rebuild_list = [&modals_controller, sessions_container] {
         sessions_container->DetachAllChildren();
@@ -74,7 +75,8 @@ inline Component EditSessionsModal(const ModalsController& modals_controller,
     });
 
     return Renderer(container, [sessions_container, delete_btn, cancel_btn, &modals_controller, rebuild_list] {
-        useEffect(
+        use_effect(
+            effect_state,
             [rebuild_list, cancel_btn] {
                 rebuild_list();
             },

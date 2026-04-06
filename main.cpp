@@ -18,8 +18,8 @@
 using namespace ftxui;
 
 // Update timer each 1 sec
-std::jthread run_timer(ScreenInteractive& screen) {
-    return std::jthread([&screen](std::stop_token stop_token) {
+std::jthread run_timer(ScreenInteractive& screen, std::function<void()>&& on_tick) {
+    return std::jthread([&screen, on_tick = std::move(on_tick)](std::stop_token stop_token) {
         using namespace std::chrono_literals;
 
         while (!stop_token.stop_requested()) {
@@ -29,6 +29,7 @@ std::jthread run_timer(ScreenInteractive& screen) {
                 break;
             }
 
+            on_tick();
             screen.PostEvent(Event::Custom);
         }
     });
@@ -38,7 +39,6 @@ int main() {
     using namespace std::chrono_literals;
     auto screen = App::Fullscreen();
 
-    auto timer_thread = run_timer(screen);
     const db::Database database("tasks.db");
 
     AppState app_state = {
@@ -47,6 +47,12 @@ int main() {
         .ui = {.selected_task_index = 0},
         .db = database.raw(),
     };
+
+    auto timer_thread = run_timer(screen, [&app_state] {
+        if (app_state.active_session) {
+            app_state.active_session->refresh_duration();
+        }
+    });
 
     const ModalsController modals_controller(app_state);
     const AppController controller(app_state);
