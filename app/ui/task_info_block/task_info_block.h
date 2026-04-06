@@ -69,7 +69,7 @@ inline Component TaskInfoBlock(const AppState& app_state, const ModalsController
 
     auto component =
         Renderer(layer, [&app_state, &items, copy_title_btn, copy_description_btn, edit_sessions_button]() {
-            if (items.empty()) {
+            if (items.empty() || app_state.ui.selected_task_index >= static_cast<int>(items.size())) {
                 return ContainerComponent(emptyElement());
             }
 

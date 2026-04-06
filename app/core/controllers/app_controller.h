@@ -30,10 +30,15 @@ public:
     void delete_selected_task() const {
         if (const std::optional<int64_t> task_id = get_selected_task_id_from_timesheets(app_state_)) {
             delete_task(app_state_, *task_id);
-            if (auto& selected_index = app_state_.ui.selected_task_index; selected_index > 0) {
-                selected_index--;
-            }
             refresh_timesheet();
+
+            auto& idx = app_state_.ui.selected_task_index;
+            const int new_size = static_cast<int>(app_state_.timesheet.get_items().size());
+            if (new_size == 0) {
+                idx = 0;
+            } else if (idx >= new_size) {
+                idx = new_size - 1;
+            }
         }
     }
 
