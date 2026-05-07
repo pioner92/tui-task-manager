@@ -109,6 +109,10 @@ int main() {
                   modals_controller.open_edit_task();
                   return true;
               }
+              if (event == Event::Character('r')) {
+                  modals_controller.open_report();
+                  return true;
+              }
               if (event == Event::Character('q')) {
                   screen.ExitLoopClosure()();
                   return true;

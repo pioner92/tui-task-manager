@@ -79,6 +79,12 @@ public:
         app_state_.ui.modal_type = ModalType::EDIT_SESSIONS;
     }
 
+    void open_report() const {
+        update_triggered();
+        app_state_.ui.show_modal = true;
+        app_state_.ui.modal_type = ModalType::REPORT;
+    }
+
     void close() const {
         update_triggered();
         app_state_.ui.show_modal = false;

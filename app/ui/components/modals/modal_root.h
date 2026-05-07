@@ -8,6 +8,7 @@
 #include "delete_task_modal.h"
 #include "edit_session_modal.h"
 #include "edit_task_modal.h"
+#include "report_modal.h"
 
 using namespace ftxui;
 
@@ -42,6 +43,8 @@ ModalRoot(AppState& app_state, const AppController& controller, const ModalsCont
         },
         close);
 
+    const auto moda_report = ReportModal(app_state, modals_controller, close);
+
     const auto modal_edit_sessions = EditSessionsModal(
         modals_controller,
         [&controller, &modals_controller] {
@@ -68,45 +71,57 @@ ModalRoot(AppState& app_state, const AppController& controller, const ModalsCont
         modal_edit_task,
         modal_delete_task,
         modal_edit_sessions,
+        moda_report,
     });
 
-    return Renderer(
-        container,
-        [container, &app_state, modal_create_task, modal_delete_task, modal_edit_task, modal_edit_sessions]() {
-            Element modal;
+    return Renderer(container,
+                    [container,
+                     &app_state,
+                     modal_create_task,
+                     modal_delete_task,
+                     modal_edit_task,
+                     modal_edit_sessions,
+                     moda_report]() {
+                        Element modal;
 
-            switch (app_state.ui.modal_type) {
-                case ModalType::CREATE_TASK:
-                    modal = modal_create_task->Render();
-                    if (container->ActiveChild() != modal_create_task) {
-                        container->SetActiveChild(modal_create_task);
-                    }
-                    break;
-                case ModalType::EDIT_TASK:
-                    modal = modal_edit_task->Render();
-                    if (container->ActiveChild() != modal_edit_task) {
-                        container->SetActiveChild(modal_edit_task);
-                    }
-                    break;
-                case ModalType::DELETE_TASK:
-                    modal = modal_delete_task->Render();
-                    if (container->ActiveChild() != modal_delete_task) {
-                        container->SetActiveChild(modal_delete_task);
-                    }
-                    break;
+                        switch (app_state.ui.modal_type) {
+                            case ModalType::CREATE_TASK:
+                                modal = modal_create_task->Render();
+                                if (container->ActiveChild() != modal_create_task) {
+                                    container->SetActiveChild(modal_create_task);
+                                }
+                                break;
+                            case ModalType::EDIT_TASK:
+                                modal = modal_edit_task->Render();
+                                if (container->ActiveChild() != modal_edit_task) {
+                                    container->SetActiveChild(modal_edit_task);
+                                }
+                                break;
+                            case ModalType::DELETE_TASK:
+                                modal = modal_delete_task->Render();
+                                if (container->ActiveChild() != modal_delete_task) {
+                                    container->SetActiveChild(modal_delete_task);
+                                }
+                                break;
 
-                case ModalType::EDIT_SESSIONS:
-                    modal = modal_edit_sessions->Render();
-                    if (container->ActiveChild() != modal_edit_sessions) {
-                        container->SetActiveChild(modal_edit_sessions);
-                    }
-                    break;
-                case ModalType::NONE:
-                    return emptyElement();
-            }
+                            case ModalType::EDIT_SESSIONS:
+                                modal = modal_edit_sessions->Render();
+                                if (container->ActiveChild() != modal_edit_sessions) {
+                                    container->SetActiveChild(modal_edit_sessions);
+                                }
+                                break;
+                            case ModalType::REPORT:
+                                modal = moda_report->Render();
+                                if (container->ActiveChild() != moda_report) {
+                                    container->SetActiveChild(moda_report);
+                                }
+                                break;
+                            case ModalType::NONE:
+                                return emptyElement();
+                        }
 
-            return dbox({
-                modal | center,
-            });
-        });
+                        return dbox({
+                            modal | center,
+                        });
+                    });
 }

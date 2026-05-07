@@ -18,6 +18,7 @@ public:
     void create_new_task(const CreateTaskInfo& info) const {
         create_task(app_state_, info);
         refresh_timesheet();
+        app_state_.ui.selected_task_index = 0;
     }
 
     void edit_selected_task(const CreateTaskInfo& info) const {

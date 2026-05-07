@@ -116,7 +116,7 @@ inline Component TaskInfoBlock(const AppState& app_state, const ModalsController
         });
 
     component |= CatchEvent([&](Event event) {
-        if (event.is_mouse()) {
+        if (event.is_mouse() && !app_state.ui.show_modal) {
             const auto& mouse = event.mouse();
             scroll_state.handle_mouse(mouse);
         }

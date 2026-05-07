@@ -86,6 +86,7 @@ enum class ModalType {
     EDIT_TASK,
     DELETE_TASK,
     EDIT_SESSIONS,
+    REPORT,
 };
 
 struct UIState {

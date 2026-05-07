@@ -14,7 +14,7 @@ inline Element Footer() {
         separator() | color(theme::panel2),
         hbox({PaddingH(),
               Text("[a] Add | [d] Delete | [e] Edit | [Space] Start/Stop | Status: [1] TODO | [2] IN PROGRESS | [3] "
-                   "DONE |",
+                   "DONE | [r] Report",
                    theme::subtle)}),
     });
 }
