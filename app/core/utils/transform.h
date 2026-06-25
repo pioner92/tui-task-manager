@@ -13,6 +13,7 @@
 
 struct TaskDayAgg {
     const TaskEntity* task_entity = nullptr;
+    int64_t sort_at = 0;
     int64_t duration = 0;
 };
 
@@ -31,6 +32,7 @@ inline Timesheet to_timesheet(const std::deque<TaskEntity>& task_entities) {
             int64_t day_ts = to_day_key(te.task.created_at);
             auto& agg = session_groups[day_ts][task_id];
             agg.task_entity = &te;
+            agg.sort_at = te.task.created_at;
             continue;
         }
 
@@ -38,6 +40,9 @@ inline Timesheet to_timesheet(const std::deque<TaskEntity>& task_entities) {
             const DayTS day_ts = to_day_key(s.start_at);
             auto& agg = session_groups[day_ts][task_id];
             agg.task_entity = &te;
+            if (agg.sort_at == 0 || s.start_at < agg.sort_at) {
+                agg.sort_at = s.start_at;
+            }
             if (s.end_at) {
                 agg.duration += get_session_duration_sec(s);
             }
@@ -54,22 +59,20 @@ inline Timesheet to_timesheet(const std::deque<TaskEntity>& task_entities) {
 
     for (const auto& [day_ts, t_d]: session_groups) {
         for (const auto& [_, agg]: t_d) {
-            timesheet.items_.emplace_back(day_ts, agg.duration, agg.task_entity);
+            timesheet.items_.emplace_back(day_ts, agg.sort_at, agg.duration, agg.task_entity);
             timesheet.days_duration_[day_ts] += agg.duration;
         }
     }
 
-    // Sort by day desc, then by created_at desc, then by task_id desc ( the most recent tasks first )
+    // Sort by day desc, then by first session start inside the day desc.
+    // Tasks without sessions use created_at as the same sort key.
     std::ranges::sort(timesheet.items_, [](const TimesheetItem& a, const TimesheetItem& b) {
         if (a.day_ts != b.day_ts) {
             return a.day_ts > b.day_ts;
         }
 
-        const auto a_created_at = a.task_entity->task.created_at;
-        const auto b_created_at = b.task_entity->task.created_at;
-
-        if (a_created_at != b_created_at) {
-            return a_created_at > b_created_at;
+        if (a.sort_at != b.sort_at) {
+            return a.sort_at > b.sort_at;
         }
 
         return a.task_entity->task.id > b.task_entity->task.id;

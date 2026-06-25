@@ -30,6 +30,7 @@ struct CreateTaskInfo {
 
 struct TimesheetItem {
     int64_t day_ts;
+    int64_t sort_at;
     int64_t duration_total_sec;
     const TaskEntity* task_entity;
 };
