@@ -20,12 +20,11 @@ FetchContent_MakeAvailable(ftxui)
 
 add_library(sqlite3 STATIC
         app/third_party/sqlite/sqlite3.c
-        app/core/storage/storage.cpp
-        app/ui/timesheet_list/list_item.h
-        app/ui/utils.h
-        app/ui/task_info_block/description.h
 )
 
+add_library(app_core STATIC
+        app/core/storage/storage.cpp
+)
 
 target_include_directories(sqlite3 PUBLIC
         app/third_party/sqlite
@@ -42,4 +41,5 @@ target_link_libraries(task_manager PRIVATE
         ftxui::dom
         ftxui::component
         sqlite3
+        app_core
 )
